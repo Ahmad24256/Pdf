@@ -16,7 +16,15 @@
       "expo-sqlite",
       "expo-file-system",
       "expo-document-picker",
-      ["react-native-pdf-jsi", { "ocr": false }]
+      ["react-native-pdf-jsi", { "ocr": false }],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ]
     ]
   }
 }

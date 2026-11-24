@@ -12,6 +12,10 @@ export function documentPath(id: string, format: DocumentFormat): string {
   return `${documentsDir()}${id}.${format}`;
 }
 
+export function uriToPath(uri: string): string {
+  return uri.startsWith('file://') ? uri.slice('file://'.length) : uri;
+}
+
 export async function importFile(sourceUri: string, name: string): Promise<DocumentMeta> {
   const format = formatFromFileName(name);
   if (!format) {

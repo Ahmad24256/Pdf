@@ -15,6 +15,7 @@
     "@doko/react-native-pdf-editor": "^0.7.0",
     "@shashimadushan/docx-editor-react-native": "*",
     "expo": "~54.0.0",
+    "expo-build-properties": "~1.0.10",
     "expo-document-picker": "~14.0.0",
     "expo-file-system": "~19.0.0",
     "expo-sqlite": "~16.0.0",

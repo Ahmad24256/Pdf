@@ -31,6 +31,9 @@ await assert.rejects(
   (e) => e.name === 'AppError' && /Unsupported file type/.test(e.userMessage),
 );
 
+assert.equal(files.uriToPath('file:///sandbox/documents/a.pdf'), '/sandbox/documents/a.pdf');
+assert.equal(files.uriToPath('/plain/path.pdf'), '/plain/path.pdf');
+
 await files.deleteDocumentFiles(meta.uri, null);
 assert.equal(await files.fileExists(meta.uri), false);
 assert.deepEqual(await files.listDocumentUris(), []);
