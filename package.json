@@ -9,7 +9,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "node scripts/schema.test.mjs"
+    "test": "node scripts/schema.test.mjs && node --import ./scripts/register-hooks.mjs scripts/db.test.mjs"
   },
   "dependencies": {
     "@doko/react-native-pdf-editor": "^0.7.0",
