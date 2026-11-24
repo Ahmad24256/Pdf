@@ -2,6 +2,7 @@ import { Pressable, Text, View } from 'react-native';
 import type { DocumentFormat, DocumentMeta } from '../../types/document';
 import PdfViewerScreen from '../../features/pdf/PdfViewerScreen';
 import DocxEditorScreen from '../../features/docx/DocxEditorScreen';
+import PptxViewerScreen from '../../features/pptx/PptxViewerScreen';
 
 function FormatStub({ format, doc, onBack }: { format: DocumentFormat; doc: DocumentMeta; onBack: () => void }) {
   return (
@@ -28,7 +29,7 @@ export default function DocumentScreen({ doc, onBack }: { doc: DocumentMeta; onB
     case 'docx':
       return <DocxEditorScreen doc={doc} onBack={onBack} />;
     case 'pptx':
-      return <FormatStub format="pptx" doc={doc} onBack={onBack} />;
+      return <PptxViewerScreen doc={doc} onBack={onBack} />;
     case 'xlsx':
       return <FormatStub format="xlsx" doc={doc} onBack={onBack} />;
   }
