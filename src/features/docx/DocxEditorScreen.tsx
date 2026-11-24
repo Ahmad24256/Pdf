@@ -3,10 +3,13 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import type { DraftStorageAdapter } from '@shashimadushan/docx-editor-react-native';
 import { toUserMessage } from '../../core/errors';
 import { readFileBase64, writeFileBase64 } from '../../core/fs/documentFiles';
+import { successHaptic } from '../../core/haptics';
 import { useDocumentsStore } from '../../core/store/documentsStore';
 import type { DocumentMeta } from '../../types/document';
+import { useTheme } from '../../ui/theme';
 import EngineFallback from '../../ui/components/EngineFallback';
 import ErrorBanner from '../../ui/components/ErrorBanner';
+import ScreenHeader from '../../ui/components/ScreenHeader';
 import { DocxEditorView, isDocxEditorAvailable, useDocxEditorHandle } from './adapters/docxAdapter';
 
 export default function DocxEditorScreen({ doc, onBack }: { doc: DocumentMeta; onBack: () => void }) {
@@ -28,6 +31,7 @@ function DocxEditorInner({ doc, onBack }: { doc: DocumentMeta; onBack: () => voi
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { colors, radius, fontSize } = useTheme();
 
   const persist = useCallback(
     async (base64: string) => {
@@ -55,6 +59,7 @@ function DocxEditorInner({ doc, onBack }: { doc: DocumentMeta; onBack: () => voi
       const base64 = await handle.current.saveDocx();
       await persist(base64);
       setDirty(false);
+      successHaptic();
     } catch (e) {
       setError(toUserMessage(e));
     } finally {
@@ -73,23 +78,36 @@ function DocxEditorInner({ doc, onBack }: { doc: DocumentMeta; onBack: () => voi
   );
 
   return (
-    <View style={{ flex: 1, paddingTop: 56 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8 }}>
-        <Pressable onPress={onBack} hitSlop={8}>
-          <Text style={{ color: '#0a7d6c', fontWeight: '600' }}>Back</Text>
-        </Pressable>
-        <Text style={{ flex: 1, marginLeft: 12, fontWeight: '700' }} numberOfLines={1}>
-          {doc.name}
-        </Text>
-        {dirty ? <Text style={{ color: '#ef6c00', fontSize: 12, marginRight: 8 }}>Unsaved</Text> : null}
-        <Pressable
-          onPress={handleSave}
-          disabled={busy || !ready}
-          style={{ backgroundColor: busy || !ready ? '#9db8b3' : '#0a7d6c', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 }}
-        >
-          {busy ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff', fontWeight: '600' }}>Save</Text>}
-        </Pressable>
-      </View>
+    <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: 56 }}>
+      <ScreenHeader
+        title={doc.name}
+        onBack={onBack}
+        right={
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {dirty ? (
+              <Text style={{ color: colors.accent, fontSize: fontSize.caption, marginRight: 8, fontWeight: '600' }}>
+                Unsaved
+              </Text>
+            ) : null}
+            <Pressable
+              onPress={handleSave}
+              disabled={busy || !ready}
+              style={{
+                backgroundColor: busy || !ready ? colors.chip : colors.accent,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: radius.sm,
+              }}
+            >
+              {busy ? (
+                <ActivityIndicator color={colors.onAccent} />
+              ) : (
+                <Text style={{ color: colors.onAccent, fontWeight: '700', fontSize: fontSize.caption }}>SAVE</Text>
+              )}
+            </Pressable>
+          </View>
+        }
+      />
       {error ? <ErrorBanner message={error} onDismiss={() => setError(null)} /> : null}
       <View style={{ flex: 1 }}>
         <DocxEditorView

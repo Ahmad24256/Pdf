@@ -1,5 +1,6 @@
 import { Image, Pressable, Text, View } from 'react-native';
 import type { DocumentFormat, DocumentMeta } from '../../types/document';
+import { useTheme } from '../theme';
 
 const FORMAT_COLORS: Record<DocumentFormat, string> = {
   pdf: '#d32f2f',
@@ -21,44 +22,54 @@ export default function DocumentCard({
   onPress?: (doc: DocumentMeta) => void;
   onLongPress?: (doc: DocumentMeta) => void;
 }) {
+  const { colors, spacing, radius, fontSize } = useTheme();
   const color = FORMAT_COLORS[document.format];
   return (
     <Pressable
       onPress={() => onPress?.(document)}
       onLongPress={() => onLongPress?.(document)}
-      style={{
+      style={({ pressed }) => ({
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
-      }}
+        marginHorizontal: spacing.md,
+        marginTop: spacing.sm,
+        padding: spacing.sm + 4,
+        borderRadius: radius.md,
+        backgroundColor: colors.surface,
+        opacity: pressed ? 0.7 : 1,
+        borderWidth: 1,
+        borderColor: colors.border,
+      })}
     >
       {document.thumbnailPath ? (
-        <Image source={{ uri: document.thumbnailPath }} style={{ width: 44, height: 56, borderRadius: 4 }} />
+        <Image
+          source={{ uri: document.thumbnailPath }}
+          style={{ width: 44, height: 56, borderRadius: radius.sm, backgroundColor: colors.chip }}
+        />
       ) : (
         <View
           style={{
             width: 44,
             height: 56,
-            borderRadius: 4,
+            borderRadius: radius.sm,
             backgroundColor: color,
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{document.format.toUpperCase()}</Text>
+          <Text style={{ color: '#ffffff', fontSize: 11, fontWeight: '800' }}>{document.format.toUpperCase()}</Text>
         </View>
       )}
-      <View style={{ flex: 1, marginLeft: 12 }}>
-        <Text style={{ fontSize: 16, fontWeight: '600' }} numberOfLines={1}>
+      <View style={{ flex: 1, marginLeft: spacing.sm + 4 }}>
+        <Text style={{ fontSize: fontSize.body, fontWeight: '600', color: colors.text }} numberOfLines={1}>
           {document.name}
         </Text>
-        <Text style={{ color: '#666', fontSize: 12, marginTop: 4 }}>{formatDate(document.lastModified)}</Text>
+        <Text style={{ color: colors.textSecondary, fontSize: fontSize.caption, marginTop: 4 }}>
+          {formatDate(document.lastModified)}
+        </Text>
       </View>
-      <View style={{ backgroundColor: color, borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 }}>
-        <Text style={{ color: '#fff', fontSize: 10, fontWeight: '700' }}>{document.format.toUpperCase()}</Text>
+      <View style={{ backgroundColor: color, borderRadius: radius.sm, paddingHorizontal: 6, paddingVertical: 2 }}>
+        <Text style={{ color: '#ffffff', fontSize: 10, fontWeight: '700' }}>{document.format.toUpperCase()}</Text>
       </View>
     </Pressable>
   );

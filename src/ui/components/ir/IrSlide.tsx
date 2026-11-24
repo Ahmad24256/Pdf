@@ -1,4 +1,5 @@
 import { Text, View, useWindowDimensions } from 'react-native';
+import { useTheme } from '../../theme';
 import type { IrShape, IrSlide as IrSlideData } from './irTypes';
 import { IrRuns } from './IrBlocks';
 
@@ -32,13 +33,14 @@ function ShapeView({ shape, scale }: { shape: IrShape; scale: number }) {
 
 export default function IrSlide({ slide }: { slide: IrSlideData }) {
   const { width: screenWidth } = useWindowDimensions();
+  const { colors } = useTheme();
   const scale = screenWidth / slide.width;
   return (
     <View
       style={{
         width: screenWidth,
         height: slide.height * scale,
-        backgroundColor: slide.background?.type === 'solid' ? slide.background.color : '#ffffff',
+        backgroundColor: slide.background?.type === 'solid' ? slide.background.color : colors.surface,
         overflow: 'hidden',
       }}
     >

@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useConvertedIR } from '../../core/convert/useConvertedIR';
 import type { DocumentMeta } from '../../types/document';
+import { useTheme } from '../../ui/theme';
 import EngineFallback from '../../ui/components/EngineFallback';
+import ScreenHeader from '../../ui/components/ScreenHeader';
 import IrBlocks from '../../ui/components/ir/IrBlocks';
 import IrTableGrid from '../../ui/components/ir/IrTableGrid';
 import type { IrPage } from '../../ui/components/ir/irTypes';
@@ -10,12 +12,13 @@ import type { IrPage } from '../../ui/components/ir/irTypes';
 export default function XlsxViewerScreen({ doc, onBack }: { doc: DocumentMeta; onBack: () => void }) {
   const state = useConvertedIR(doc);
   const [sheetIndex, setSheetIndex] = useState(0);
+  const { colors, spacing, radius, fontSize } = useTheme();
 
   if (state.status === 'loading') {
     return (
-      <View style={{ flex: 1, paddingTop: 56 }}>
-        <Header doc={doc} onBack={onBack} />
-        <ActivityIndicator style={{ marginTop: 32 }} />
+      <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: 56 }}>
+        <ScreenHeader title={doc.name} onBack={onBack} />
+        <ActivityIndicator style={{ marginTop: 48 }} color={colors.accent} />
       </View>
     );
   }
@@ -28,46 +31,54 @@ export default function XlsxViewerScreen({ doc, onBack }: { doc: DocumentMeta; o
   const sheet = pages[Math.min(sheetIndex, Math.max(pages.length - 1, 0))];
 
   return (
-    <View style={{ flex: 1, paddingTop: 56 }}>
-      <Header doc={doc} onBack={onBack} />
+    <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: 56 }}>
+      <ScreenHeader title={doc.name} onBack={onBack} />
       {pages.length > 1 ? (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, borderBottomWidth: 1, borderBottomColor: '#e0e0e0' }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ flexGrow: 0, borderBottomWidth: 1, borderBottomColor: colors.border, backgroundColor: colors.surface }}
+        >
           {pages.map((page, index) => (
             <Pressable
               key={page.pageIndex}
               onPress={() => setSheetIndex(index)}
-              style={{ paddingHorizontal: 14, paddingVertical: 8, backgroundColor: index === sheetIndex ? '#0a7d6c' : 'transparent' }}
+              style={{
+                paddingHorizontal: 14,
+                paddingVertical: 10,
+                backgroundColor: index === sheetIndex ? colors.accent : 'transparent',
+                borderRadius: radius.sm,
+                marginHorizontal: spacing.xs,
+              }}
             >
-              <Text style={{ color: index === sheetIndex ? '#fff' : '#333', fontWeight: index === sheetIndex ? '700' : '400' }}>
+              <Text
+                style={{
+                  color: index === sheetIndex ? colors.onAccent : colors.text,
+                  fontWeight: index === sheetIndex ? '700' : '400',
+                  fontSize: fontSize.caption,
+                }}
+              >
                 {page.name ?? `Sheet ${index + 1}`}
               </Text>
             </Pressable>
           ))}
         </ScrollView>
       ) : null}
-      {sheet ? <SheetContent page={sheet} /> : (
-        <Text style={{ textAlign: 'center', marginTop: 32, color: '#555' }}>This workbook has no sheets.</Text>
+      {sheet ? (
+        <SheetContent page={sheet} />
+      ) : (
+        <Text style={{ textAlign: 'center', marginTop: 48, color: colors.textSecondary, fontSize: fontSize.body }}>
+          This workbook has no sheets.
+        </Text>
       )}
     </View>
   );
 }
 
-function Header({ doc, onBack }: { doc: DocumentMeta; onBack: () => void }) {
-  return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8 }}>
-      <Pressable onPress={onBack} hitSlop={8}>
-        <Text style={{ color: '#0a7d6c', fontWeight: '600' }}>Back</Text>
-      </Pressable>
-      <Text style={{ flex: 1, marginLeft: 12, fontWeight: '700' }} numberOfLines={1}>
-        {doc.name}
-      </Text>
-    </View>
-  );
-}
-
 function SheetContent({ page }: { page: IrPage }) {
+  const { colors } = useTheme();
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 8 }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: 8 }}>
       {(page.blocks ?? []).map((block, index) =>
         block.type === 'table' ? <IrTableGrid key={index} block={block} /> : <IrBlocks key={index} blocks={[block]} />,
       )}

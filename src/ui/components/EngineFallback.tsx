@@ -1,4 +1,6 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { useTheme } from '../theme';
+import ScreenHeader from './ScreenHeader';
 
 export default function EngineFallback({
   title,
@@ -9,18 +11,17 @@ export default function EngineFallback({
   message: string;
   onBack?: () => void;
 }) {
+  const { colors, spacing, fontSize } = useTheme();
   return (
-    <View style={{ flex: 1, paddingTop: 56 }}>
-      {onBack ? (
-        <Pressable onPress={onBack} hitSlop={8} style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
-          <Text style={{ color: '#0a7d6c', fontWeight: '600' }}>Back</Text>
-        </Pressable>
-      ) : null}
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <Text style={{ fontSize: 18, fontWeight: '700', textAlign: 'center' }} numberOfLines={2}>
+    <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: 56 }}>
+      <ScreenHeader title={title} onBack={onBack} />
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.lg }}>
+        <Text style={{ fontSize: fontSize.header, fontWeight: '700', color: colors.text, textAlign: 'center' }} numberOfLines={2}>
           {title}
         </Text>
-        <Text style={{ marginTop: 8, color: '#555', textAlign: 'center' }}>{message}</Text>
+        <Text style={{ marginTop: spacing.sm, color: colors.textSecondary, textAlign: 'center', lineHeight: 22 }}>
+          {message}
+        </Text>
       </View>
     </View>
   );

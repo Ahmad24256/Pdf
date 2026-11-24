@@ -1,7 +1,9 @@
 import { Text, View } from 'react-native';
+import { useTheme } from '../../theme';
 import type { IrBlock, IrRun, IrTableCell } from './irTypes';
 
 export function IrRuns({ runs }: { runs?: IrRun[] }) {
+  const { colors } = useTheme();
   if (!runs?.length) return null;
   return (
     <>
@@ -13,7 +15,7 @@ export function IrRuns({ runs }: { runs?: IrRun[] }) {
             fontStyle: run.italic ? 'italic' : 'normal',
             fontSize: run.fontSize,
             fontFamily: run.fontFamily,
-            color: run.color ?? '#000000',
+            color: run.color ?? colors.text,
             textDecorationLine: run.underline ? 'underline' : 'none',
           }}
         >
@@ -29,12 +31,21 @@ function cellText(cell: IrTableCell): string {
 }
 
 export default function IrBlocks({ blocks }: { blocks?: IrBlock[] }) {
+  const { colors, spacing, fontSize } = useTheme();
   return (
-    <View style={{ padding: 16 }}>
+    <View style={{ padding: spacing.md }}>
       {(blocks ?? []).map((block, index) => {
         if (block.type === 'heading') {
           return (
-            <Text key={index} style={{ fontSize: Math.max(16, 24 - (block.level ?? 1) * 2), fontWeight: '700', marginVertical: 6 }}>
+            <Text
+              key={index}
+              style={{
+                fontSize: Math.max(16, 24 - (block.level ?? 1) * 2),
+                fontWeight: '700',
+                marginVertical: 6,
+                color: colors.text,
+              }}
+            >
               <IrRuns runs={block.runs} />
             </Text>
           );
@@ -43,17 +54,29 @@ export default function IrBlocks({ blocks }: { blocks?: IrBlock[] }) {
           return (
             <View key={index} style={{ marginVertical: 6 }}>
               {(block.rows ?? []).map((row, rowIndex) => (
-                <Text key={rowIndex} style={{ fontSize: 14 }}>
+                <Text key={rowIndex} style={{ fontSize: fontSize.body - 2, color: colors.text }}>
                   {(row ?? []).map((cell, cellIndex) => `${cellText(cell)}${cellIndex < row.length - 1 ? ' | ' : ''}`)}
                 </Text>
               ))}
             </View>
           );
         }
-        if (block.type === 'image') return <Text key={index} style={{ color: '#666', marginVertical: 4 }}>[Image]</Text>;
-        if (block.type === 'chart') return <Text key={index} style={{ color: '#666', marginVertical: 4 }}>[Chart]</Text>;
+        if (block.type === 'image') {
+          return (
+            <Text key={index} style={{ color: colors.textSecondary, marginVertical: 4, fontSize: fontSize.body }}>
+              [Image]
+            </Text>
+          );
+        }
+        if (block.type === 'chart') {
+          return (
+            <Text key={index} style={{ color: colors.textSecondary, marginVertical: 4, fontSize: fontSize.body }}>
+              [Chart]
+            </Text>
+          );
+        }
         return (
-          <Text key={index} style={{ fontSize: 16, marginVertical: 4 }}>
+          <Text key={index} style={{ fontSize: fontSize.body, marginVertical: 4, color: colors.text }}>
             <IrRuns runs={block.runs} />
           </Text>
         );

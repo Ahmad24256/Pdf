@@ -1,4 +1,5 @@
 import { ScrollView, Text, View } from 'react-native';
+import { useTheme } from '../../theme';
 import type { IrBlock, IrTableCell } from './irTypes';
 
 function cellText(cell: IrTableCell): string {
@@ -6,8 +7,9 @@ function cellText(cell: IrTableCell): string {
 }
 
 export default function IrTableGrid({ block }: { block: IrBlock }) {
+  const { colors, spacing, fontSize } = useTheme();
   return (
-    <ScrollView horizontal style={{ marginVertical: 6 }}>
+    <ScrollView horizontal style={{ marginVertical: spacing.sm }}>
       <View>
         {(block.rows ?? []).map((row, rowIndex) => (
           <View key={rowIndex} style={{ flexDirection: 'row' }}>
@@ -16,13 +18,13 @@ export default function IrTableGrid({ block }: { block: IrBlock }) {
                 key={cellIndex}
                 style={{
                   borderWidth: 1,
-                  borderColor: '#cccccc',
+                  borderColor: colors.border,
                   padding: 6,
                   minWidth: 80,
-                  backgroundColor: cell.background ?? '#ffffff',
+                  backgroundColor: colors.surface,
                 }}
               >
-                <Text style={{ fontSize: 13 }}>{cellText(cell)}</Text>
+                <Text style={{ fontSize: fontSize.caption + 1, color: colors.text }}>{cellText(cell)}</Text>
               </View>
             ))}
           </View>

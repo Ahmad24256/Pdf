@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
 import { toUserMessage } from '../../core/errors';
 import { uriToPath } from '../../core/fs/documentFiles';
+import { successHaptic } from '../../core/haptics';
 import { useDocumentsStore } from '../../core/store/documentsStore';
 import type { DocumentMeta } from '../../types/document';
+import { useTheme } from '../../ui/theme';
 import EngineFallback from '../../ui/components/EngineFallback';
 import ErrorBanner from '../../ui/components/ErrorBanner';
+import ScreenHeader from '../../ui/components/ScreenHeader';
 import { addTextAnnotation, getPageInfo, isPdfEditorAvailable } from './adapters/pdfEditAdapter';
 
 export default function PdfEditorScreen({
@@ -17,6 +20,7 @@ export default function PdfEditorScreen({
   onBack: () => void;
   onSaved: () => void;
 }) {
+  const { colors, spacing, radius, fontSize } = useTheme();
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +57,7 @@ export default function PdfEditorScreen({
         fontSize: 16,
       });
       await useDocumentsStore.getState().touch(doc.id);
+      successHaptic();
       onSaved();
     } catch (e) {
       setError(toUserMessage(e));
@@ -62,44 +67,47 @@ export default function PdfEditorScreen({
   };
 
   return (
-    <View style={{ flex: 1, paddingTop: 56 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 12 }}>
-        <Pressable onPress={onBack} hitSlop={8}>
-          <Text style={{ color: '#0a7d6c', fontWeight: '600' }}>Back</Text>
-        </Pressable>
-        <Text style={{ flex: 1, marginLeft: 12, fontSize: 18, fontWeight: '700' }} numberOfLines={1}>
-          Edit {doc.name}
-        </Text>
-      </View>
+    <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: 56 }}>
+      <ScreenHeader title="Edit PDF" subtitle={doc.name} onBack={onBack} />
       {error ? <ErrorBanner message={error} onDismiss={() => setError(null)} /> : null}
-      <View style={{ padding: 16 }}>
-        <Text style={{ marginBottom: 8, color: '#555' }}>Text is stamped on the first page, then saved into this app's storage.</Text>
+      <View style={{ padding: spacing.md }}>
+        <Text style={{ marginBottom: spacing.sm, color: colors.textSecondary, fontSize: fontSize.body, lineHeight: 22 }}>
+          Text is stamped on the first page, then saved into this app's storage.
+        </Text>
         <TextInput
           value={text}
           onChangeText={setText}
           placeholder="Text to add to page 1"
+          placeholderTextColor={colors.textSecondary}
           multiline
           style={{
             borderWidth: 1,
-            borderColor: '#ccc',
-            borderRadius: 8,
-            padding: 10,
-            minHeight: 80,
+            borderColor: colors.border,
+            backgroundColor: colors.surface,
+            color: colors.text,
+            borderRadius: radius.md,
+            padding: 12,
+            minHeight: 88,
             textAlignVertical: 'top',
+            fontSize: fontSize.body,
           }}
         />
         <Pressable
           onPress={handleSave}
           disabled={busy || !text.trim()}
           style={{
-            marginTop: 12,
-            backgroundColor: busy || !text.trim() ? '#9db8b3' : '#0a7d6c',
-            paddingVertical: 10,
-            borderRadius: 8,
+            marginTop: spacing.md,
+            backgroundColor: busy || !text.trim() ? colors.chip : colors.accent,
+            paddingVertical: 12,
+            borderRadius: radius.md,
             alignItems: 'center',
           }}
         >
-          {busy ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff', fontWeight: '600' }}>Save to device</Text>}
+          {busy ? (
+            <ActivityIndicator color={colors.onAccent} />
+          ) : (
+            <Text style={{ color: colors.onAccent, fontWeight: '700', fontSize: fontSize.body }}>Save to device</Text>
+          )}
         </Pressable>
       </View>
     </View>

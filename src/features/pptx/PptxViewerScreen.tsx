@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View, useWindowDimensions } from 'react-native';
 import { useConvertedIR } from '../../core/convert/useConvertedIR';
 import type { DocumentMeta } from '../../types/document';
+import { useTheme } from '../../ui/theme';
 import EngineFallback from '../../ui/components/EngineFallback';
+import ScreenHeader from '../../ui/components/ScreenHeader';
 import IrBlocks from '../../ui/components/ir/IrBlocks';
 import IrSlide from '../../ui/components/ir/IrSlide';
 import type { IrPage } from '../../ui/components/ir/irTypes';
@@ -11,12 +13,13 @@ export default function PptxViewerScreen({ doc, onBack }: { doc: DocumentMeta; o
   const state = useConvertedIR(doc);
   const [pageIndex, setPageIndex] = useState(0);
   const { width } = useWindowDimensions();
+  const { colors, fontSize } = useTheme();
 
   if (state.status === 'loading') {
     return (
-      <View style={{ flex: 1, paddingTop: 56 }}>
-        <Header doc={doc} onBack={onBack} />
-        <ActivityIndicator style={{ marginTop: 32 }} />
+      <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: 56 }}>
+        <ScreenHeader title={doc.name} onBack={onBack} />
+        <ActivityIndicator style={{ marginTop: 48 }} color={colors.accent} />
       </View>
     );
   }
@@ -28,8 +31,12 @@ export default function PptxViewerScreen({ doc, onBack }: { doc: DocumentMeta; o
   const pages = state.ir.pages ?? [];
 
   return (
-    <View style={{ flex: 1, paddingTop: 56 }}>
-      <Header doc={doc} onBack={onBack} subtitle={pages.length > 0 ? `Slide ${pageIndex + 1} of ${pages.length}` : undefined} />
+    <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: 56 }}>
+      <ScreenHeader
+        title={doc.name}
+        subtitle={pages.length > 0 ? `Slide ${pageIndex + 1} of ${pages.length}` : undefined}
+        onBack={onBack}
+      />
       <FlatList
         data={pages}
         keyExtractor={(page: IrPage) => String(page.pageIndex)}
@@ -38,26 +45,16 @@ export default function PptxViewerScreen({ doc, onBack }: { doc: DocumentMeta; o
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={(event) => setPageIndex(Math.round(event.nativeEvent.contentOffset.x / width))}
         renderItem={({ item }) => (
-          <View style={{ width }}>
+          <View style={{ width, backgroundColor: colors.background }}>
             {item.slide ? <IrSlide slide={item.slide} /> : <IrBlocks blocks={item.blocks} />}
           </View>
         )}
-        ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 32, color: '#555' }}>This presentation has no slides.</Text>}
+        ListEmptyComponent={
+          <Text style={{ textAlign: 'center', marginTop: 48, color: colors.textSecondary, fontSize: fontSize.body }}>
+            This presentation has no slides.
+          </Text>
+        }
       />
-    </View>
-  );
-}
-
-function Header({ doc, onBack, subtitle }: { doc: DocumentMeta; onBack: () => void; subtitle?: string }) {
-  return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8 }}>
-      <Pressable onPress={onBack} hitSlop={8}>
-        <Text style={{ color: '#0a7d6c', fontWeight: '600' }}>Back</Text>
-      </Pressable>
-      <Text style={{ flex: 1, marginLeft: 12, fontWeight: '700' }} numberOfLines={1}>
-        {doc.name}
-      </Text>
-      {subtitle ? <Text style={{ color: '#666' }}>{subtitle}</Text> : null}
     </View>
   );
 }
