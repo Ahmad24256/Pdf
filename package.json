@@ -1,0 +1,33 @@
+{
+  "name": "offline-docs",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@doko/react-native-pdf-editor": "^0.7.0",
+    "@shashimadushan/docx-editor-react-native": "*",
+    "expo": "~54.0.0",
+    "expo-document-picker": "~14.0.0",
+    "expo-file-system": "~19.0.0",
+    "expo-sqlite": "~16.0.0",
+    "expo-status-bar": "~3.0.0",
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "react-native-anydoc": "^0.5.0",
+    "react-native-nitro-modules": "^0.37.2",
+    "react-native-pdf-jsi": "^6.1.0",
+    "react-native-webview": "~13.15.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "typescript": "~5.9.2"
+  }
+}
