@@ -6,6 +6,7 @@ const realRequire = createRequire(import.meta.url);
 
 const mocks = {
   'react-native-anydoc': await import('./anydoc.mock.mjs'),
+  'react-native-pdf-jsi': await import('./pdf-jsi.mock.mjs'),
   'expo-sqlite': await import('./expo-sqlite.mock.mjs'),
   'expo-file-system': await import('./expo-file-system.mock.mjs'),
   'expo-file-system/legacy': await import('./expo-file-system.mock.mjs'),

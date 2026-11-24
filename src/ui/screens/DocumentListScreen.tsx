@@ -3,6 +3,7 @@ import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native
 import * as DocumentPicker from 'expo-document-picker';
 import { toUserMessage } from '../../core/errors';
 import { useDocumentsStore } from '../../core/store/documentsStore';
+import { generatePdfThumbnail } from '../../features/pdf/thumbnails';
 import type { DocumentMeta } from '../../types/document';
 import DocumentCard from '../components/DocumentCard';
 import EmptyState from '../components/EmptyState';
@@ -37,7 +38,13 @@ export default function DocumentListScreen({ onOpen }: { onOpen?: (doc: Document
       });
       if (!result.canceled) {
         for (const asset of result.assets) {
-          await add(asset.uri, asset.name ?? 'document');
+          const meta = await add(asset.uri, asset.name ?? 'document');
+          if (meta?.format === 'pdf') {
+            try {
+              const thumb = await generatePdfThumbnail(meta);
+              await useDocumentsStore.getState().setThumbnail(meta.id, thumb);
+            } catch {}
+          }
         }
       }
     } catch (e) {

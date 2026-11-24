@@ -3,6 +3,8 @@ const dirs = new Set(['file:///sandbox/']);
 
 export const documentDirectory = 'file:///sandbox/';
 
+const norm = (uri) => (uri.startsWith('file://') ? uri : `file://${uri}`);
+
 export function __seed(uri, content) {
   files.set(uri, content);
 }
@@ -19,9 +21,10 @@ export function __remove(uri) {
 }
 
 export async function getInfoAsync(uri) {
-  if (files.has(uri)) return { exists: true, isDirectory: false, uri };
-  if (dirs.has(uri)) return { exists: true, isDirectory: true, uri };
-  return { exists: false, isDirectory: false, uri };
+  const key = norm(uri);
+  if (files.has(key)) return { exists: true, isDirectory: false, uri: key };
+  if (dirs.has(key)) return { exists: true, isDirectory: true, uri: key };
+  return { exists: false, isDirectory: false, uri: key };
 }
 
 export async function makeDirectoryAsync(uri, options = {}) {
@@ -33,17 +36,19 @@ export async function makeDirectoryAsync(uri, options = {}) {
 }
 
 export async function copyAsync({ from, to }) {
-  if (!files.has(from)) throw new Error(`Source does not exist: ${from}`);
-  files.set(to, files.get(from));
+  const src = norm(from);
+  if (!files.has(src)) throw new Error(`Source does not exist: ${from}`);
+  files.set(norm(to), files.get(src));
 }
 
 export async function deleteAsync(uri, options = {}) {
-  if (!files.has(uri) && !dirs.has(uri)) {
+  const key = norm(uri);
+  if (!files.has(key) && !dirs.has(key)) {
     if (options.idempotent) return;
     throw new Error(`File does not exist: ${uri}`);
   }
-  files.delete(uri);
-  dirs.delete(uri);
+  files.delete(key);
+  dirs.delete(key);
 }
 
 export async function readDirectoryAsync(dir) {
@@ -63,7 +68,8 @@ export async function writeAsStringAsync(uri, data, options = {}) {
 }
 
 export async function readAsStringAsync(uri, options = {}) {
-  if (!files.has(uri)) throw new Error(`File does not exist: ${uri}`);
-  const content = files.get(uri);
+  const key = norm(uri);
+  if (!files.has(key)) throw new Error(`File does not exist: ${uri}`);
+  const content = files.get(key);
   return options.encoding === 'base64' ? Buffer.from(content, 'utf8').toString('base64') : content;
 }

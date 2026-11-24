@@ -42,6 +42,14 @@ export async function fileExists(uri: string): Promise<boolean> {
   }
 }
 
+export async function copyFile(from: string, to: string): Promise<void> {
+  try {
+    await FileSystem.copyAsync({ from, to });
+  } catch (error) {
+    throw asAppError(error, 'Could not copy this file.');
+  }
+}
+
 export async function deleteUri(uri: string): Promise<void> {
   try {
     await FileSystem.deleteAsync(uri, { idempotent: true });
