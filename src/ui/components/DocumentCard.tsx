@@ -15,14 +15,17 @@ function formatDate(timestamp: number): string {
 export default function DocumentCard({
   document,
   onPress,
+  onLongPress,
 }: {
   document: DocumentMeta;
   onPress?: (doc: DocumentMeta) => void;
+  onLongPress?: (doc: DocumentMeta) => void;
 }) {
   const color = FORMAT_COLORS[document.format];
   return (
     <Pressable
       onPress={() => onPress?.(document)}
+      onLongPress={() => onLongPress?.(document)}
       style={{
         flexDirection: 'row',
         alignItems: 'center',
