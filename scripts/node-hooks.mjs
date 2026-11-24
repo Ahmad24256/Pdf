@@ -8,6 +8,9 @@ export async function resolve(specifier, context, nextResolve) {
   if (specifier === 'zustand') {
     return { url: new URL('./zustand.mock.mjs', import.meta.url).href, shortCircuit: true };
   }
+  if (specifier === 'react-native-anydoc') {
+    return { url: new URL('./anydoc.mock.mjs', import.meta.url).href, shortCircuit: true };
+  }
   try {
     return await nextResolve(specifier, context);
   } catch (error) {
