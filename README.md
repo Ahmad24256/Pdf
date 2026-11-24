@@ -2,6 +2,14 @@
 
 Cross-platform (iOS & Android) document reader/editor that works **100% offline**. No backend, no cloud sync, no authentication, and no network calls: the app opens, renders, edits, and saves PDF, DOCX, PPTX, and XLSX files entirely on the user's device. Document metadata lives in SQLite (`expo-sqlite`); raw files and thumbnails live in the app sandbox (`expo-file-system`, under `FileSystem.documentDirectory`).
 
+## Preview
+
+Generated mockups of the main screens (replace with device screenshots after `npx expo run:ios`):
+
+| Document list | PDF viewer | Presentation viewer |
+|---|---|---|
+| ![Document list](assets/previews/preview-list.png) | ![PDF viewer](assets/previews/preview-pdf.png) | ![Presentation viewer](assets/previews/preview-slides.png) |
+
 ## Stack
 
 - Expo SDK 54 (React Native 0.81, New Architecture), TypeScript, Zustand.
