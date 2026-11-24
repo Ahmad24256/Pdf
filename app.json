@@ -15,7 +15,8 @@
     "plugins": [
       "expo-sqlite",
       "expo-file-system",
-      "expo-document-picker"
+      "expo-document-picker",
+      ["react-native-pdf-jsi", { "ocr": false }]
     ]
   }
 }
