@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Offline Docs",
+    "slug": "offline-docs",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a7d6c"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "edgeToEdgeEnabled": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a7d6c"
+      }
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-file-system",
+      "expo-document-picker",
+      ["react-native-pdf-jsi", { "ocr": false }],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ]
+    ]
+  }
+}
