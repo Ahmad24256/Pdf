@@ -3,6 +3,7 @@ import type { DocumentFormat, DocumentMeta } from '../../types/document';
 import PdfViewerScreen from '../../features/pdf/PdfViewerScreen';
 import DocxEditorScreen from '../../features/docx/DocxEditorScreen';
 import PptxViewerScreen from '../../features/pptx/PptxViewerScreen';
+import XlsxViewerScreen from '../../features/xlsx/XlsxViewerScreen';
 
 function FormatStub({ format, doc, onBack }: { format: DocumentFormat; doc: DocumentMeta; onBack: () => void }) {
   return (
@@ -31,6 +32,6 @@ export default function DocumentScreen({ doc, onBack }: { doc: DocumentMeta; onB
     case 'pptx':
       return <PptxViewerScreen doc={doc} onBack={onBack} />;
     case 'xlsx':
-      return <FormatStub format="xlsx" doc={doc} onBack={onBack} />;
+      return <XlsxViewerScreen doc={doc} onBack={onBack} />;
   }
 }

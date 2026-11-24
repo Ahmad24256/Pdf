@@ -1,46 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View, useWindowDimensions } from 'react-native';
-import { AppError, toUserMessage } from '../../core/errors';
-import { convertFileToIr, isAnydocAvailable } from '../../core/convert/anydocAdapter';
+import { useConvertedIR } from '../../core/convert/useConvertedIR';
 import type { DocumentMeta } from '../../types/document';
 import EngineFallback from '../../ui/components/EngineFallback';
-import ErrorBanner from '../../ui/components/ErrorBanner';
 import IrBlocks from '../../ui/components/ir/IrBlocks';
 import IrSlide from '../../ui/components/ir/IrSlide';
-import type { DocumentIR, IrPage } from '../../ui/components/ir/irTypes';
-
-type LoadState =
-  | { status: 'loading' }
-  | { status: 'error'; message: string }
-  | { status: 'ok'; ir: DocumentIR };
+import type { IrPage } from '../../ui/components/ir/irTypes';
 
 export default function PptxViewerScreen({ doc, onBack }: { doc: DocumentMeta; onBack: () => void }) {
-  const [state, setState] = useState<LoadState>({ status: 'loading' });
+  const state = useConvertedIR(doc);
   const [pageIndex, setPageIndex] = useState(0);
   const { width } = useWindowDimensions();
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        if (!isAnydocAvailable()) {
-          throw new AppError('The document converter is unavailable in this build.');
-        }
-        const outcome = await convertFileToIr(doc.uri);
-        if (cancelled) return;
-        if (!outcome.ok) {
-          setState({ status: 'error', message: `This file could not be parsed (${outcome.reason}).` });
-          return;
-        }
-        setState({ status: 'ok', ir: outcome.ir as DocumentIR });
-      } catch (error) {
-        if (!cancelled) setState({ status: 'error', message: toUserMessage(error) });
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [doc.uri]);
 
   if (state.status === 'loading') {
     return (
