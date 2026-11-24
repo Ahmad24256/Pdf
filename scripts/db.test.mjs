@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+import { __reset } from './expo-sqlite.mock.mjs';
 
+__reset();
 const db = await import('../src/core/storage/db.ts');
 
 const meta = {

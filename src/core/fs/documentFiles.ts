@@ -38,14 +38,18 @@ export async function fileExists(uri: string): Promise<boolean> {
   }
 }
 
-export async function deleteDocumentFiles(uri: string, thumbnailPath: string | null): Promise<void> {
+export async function deleteUri(uri: string): Promise<void> {
   try {
     await FileSystem.deleteAsync(uri, { idempotent: true });
-    if (thumbnailPath) {
-      await FileSystem.deleteAsync(thumbnailPath, { idempotent: true });
-    }
   } catch (error) {
     throw asAppError(error, 'Could not delete this file.');
+  }
+}
+
+export async function deleteDocumentFiles(uri: string, thumbnailPath: string | null): Promise<void> {
+  await deleteUri(uri);
+  if (thumbnailPath) {
+    await deleteUri(thumbnailPath);
   }
 }
 

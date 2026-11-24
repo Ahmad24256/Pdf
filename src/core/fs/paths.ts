@@ -17,6 +17,10 @@ export function thumbnailsDir(): string {
   return `${sandboxRoot()}thumbnails/`;
 }
 
+export function thumbnailPath(id: string): string {
+  return `${thumbnailsDir()}${id}.png`;
+}
+
 async function ensureDir(dir: string): Promise<void> {
   const info = await FileSystem.getInfoAsync(dir);
   if (!info.exists) {

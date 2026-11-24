@@ -1,10 +1,21 @@
 import { SQL } from '../src/core/storage/schema.ts';
 
+let rows = new Map();
+let failNextInsert = false;
+
+export function __reset() {
+  rows = new Map();
+  failNextInsert = false;
+}
+
+export function __failNextInsert() {
+  failNextInsert = true;
+}
+
 export function openDatabaseAsync(name) {
   if (typeof name !== 'string' || name.length === 0) {
     return Promise.reject(new Error('database name required'));
   }
-  const rows = new Map();
   const db = {
     async execAsync(ddl) {
       if (!ddl.includes('CREATE TABLE IF NOT EXISTS documents')) {
@@ -13,6 +24,10 @@ export function openDatabaseAsync(name) {
     },
     async runAsync(query, params = []) {
       if (query === SQL.insert) {
+        if (failNextInsert) {
+          failNextInsert = false;
+          throw new Error('forced insert failure');
+        }
         const [id, name, uri, format, lastModified, thumbnailPath] = params;
         if (rows.has(id) || [...rows.values()].some((r) => r.uri === uri)) {
           throw new Error('UNIQUE constraint failed: documents.id or documents.uri');

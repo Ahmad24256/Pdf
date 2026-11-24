@@ -13,6 +13,11 @@ export function __reset() {
   dirs.add('file:///sandbox/');
 }
 
+export function __remove(uri) {
+  files.delete(uri);
+  dirs.delete(uri);
+}
+
 export async function getInfoAsync(uri) {
   if (files.has(uri)) return { exists: true, isDirectory: false, uri };
   if (dirs.has(uri)) return { exists: true, isDirectory: true, uri };
