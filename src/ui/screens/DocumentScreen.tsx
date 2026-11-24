@@ -1,9 +1,10 @@
 import { Pressable, Text, View } from 'react-native';
 import type { DocumentFormat, DocumentMeta } from '../../types/document';
-import PdfViewerScreen from '../../features/pdf/PdfViewerScreen';
 import DocxEditorScreen from '../../features/docx/DocxEditorScreen';
+import PdfViewerScreen from '../../features/pdf/PdfViewerScreen';
 import PptxViewerScreen from '../../features/pptx/PptxViewerScreen';
 import XlsxViewerScreen from '../../features/xlsx/XlsxViewerScreen';
+import EngineErrorBoundary from '../components/EngineErrorBoundary';
 
 function FormatStub({ format, doc, onBack }: { format: DocumentFormat; doc: DocumentMeta; onBack: () => void }) {
   return (
@@ -26,12 +27,28 @@ function FormatStub({ format, doc, onBack }: { format: DocumentFormat; doc: Docu
 export default function DocumentScreen({ doc, onBack }: { doc: DocumentMeta; onBack: () => void }) {
   switch (doc.format) {
     case 'pdf':
-      return <PdfViewerScreen doc={doc} onBack={onBack} />;
+      return (
+        <EngineErrorBoundary title={doc.name} onBack={onBack}>
+          <PdfViewerScreen doc={doc} onBack={onBack} />
+        </EngineErrorBoundary>
+      );
     case 'docx':
-      return <DocxEditorScreen doc={doc} onBack={onBack} />;
+      return (
+        <EngineErrorBoundary title={doc.name} onBack={onBack}>
+          <DocxEditorScreen doc={doc} onBack={onBack} />
+        </EngineErrorBoundary>
+      );
     case 'pptx':
-      return <PptxViewerScreen doc={doc} onBack={onBack} />;
+      return (
+        <EngineErrorBoundary title={doc.name} onBack={onBack}>
+          <PptxViewerScreen doc={doc} onBack={onBack} />
+        </EngineErrorBoundary>
+      );
     case 'xlsx':
-      return <XlsxViewerScreen doc={doc} onBack={onBack} />;
+      return (
+        <EngineErrorBoundary title={doc.name} onBack={onBack}>
+          <XlsxViewerScreen doc={doc} onBack={onBack} />
+        </EngineErrorBoundary>
+      );
   }
 }
